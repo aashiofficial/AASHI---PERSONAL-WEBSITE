@@ -172,6 +172,12 @@ export default function Experience() {
               data-el="blackout"
               aria-hidden="true"
             />
+            <div
+              className={s.flash}
+              data-el="flash"
+              aria-hidden="true"
+            />
+            <div className={s.grain} aria-hidden="true" />
             </div>
           </div>
 

@@ -66,6 +66,7 @@ export function buildJourney(
   const shelfFrame = el("shelfFrame");
   const shelfBackdrop = el("shelfBackdrop");
   const blackout = el("blackout");
+  const flash = el("flash");
 
   if (
     !garden ||
@@ -79,7 +80,8 @@ export function buildJourney(
     !libraryFrame ||
     !shelf ||
     !shelfFrame ||
-    !blackout
+    !blackout ||
+    !flash
   ) {
     return null;
   }
@@ -97,6 +99,18 @@ export function buildJourney(
       y: (0.5 - GARDEN.y) * height,
       scale: mobile ? 3 : 3.6,
     };
+  };
+
+  /**
+   * The door artwork is wider than a narrow window, so the frame is panned to
+   * keep the doorway and the brass plaque together instead of cropping the
+   * right-hand side away.
+   */
+  const doorPan = () => {
+    const artWidth = doorFrame.offsetWidth;
+    const viewportWidth = window.innerWidth;
+    if (artWidth <= viewportWidth + 1) return 0;
+    return Math.min(viewportWidth / 2 - 0.4 * artWidth, 0);
   };
 
   let sceneIndex = -1;
@@ -129,6 +143,9 @@ export function buildJourney(
         end: () => Math.max(1, scroller.offsetHeight - window.innerHeight),
         scrub: 0.9,
         invalidateOnRefresh: true,
+        onRefresh: () => {
+          gsap.set(doorFrame, { x: doorPan() });
+        },
         onUpdate: (self) => {
           const progress = self.progress;
           options.onProgress?.(progress);
@@ -140,7 +157,7 @@ export function buildJourney(
                 ? 1
                 : progress < 0.82
                   ? 2
-                  : progress < 0.93
+                  : progress < 0.955
                     ? 3
                     : 4;
           if (nextScene !== sceneIndex) {
@@ -160,7 +177,7 @@ export function buildJourney(
             options.onDoorAutoOpen?.(nextAuto);
           }
 
-          const nextShelf = progress > 0.97;
+          const nextShelf = progress > 0.975;
           if (nextShelf !== shelfReady) {
             shelfReady = nextShelf;
             options.onShelfReady?.(nextShelf);
@@ -232,57 +249,82 @@ export function buildJourney(
       { autoAlpha: 1, duration: 9, ease: "power1.inOut" },
       67.5
     );
-    // The camera walks up to the doorway; the leaves open as it closes in.
-    gsap.set(doorFrame, { transformOrigin: "50.9% 52%", scale: 1 });
+    // A slow walk-up that keeps the whole composition — plaque included — in
+    // shot, then one committed push once the leaves are open.
+    gsap.set(doorFrame, {
+      transformOrigin: "50.9% 52%",
+      scale: 1,
+      x: doorPan(),
+    });
     timeline.to(
       doorFrame,
-      { scale: () => (mobile ? 1.75 : 2.1), duration: 18, ease: "power1.in" },
-      67
-    );
-    timeline.to(blackout, { autoAlpha: 0, duration: 5.5, ease: "power2.out" }, 71);
-
-    /* ---------- IV. The library ---------- */
-    // The doorway is filled by now, so the library can rise through it.
-    timeline.to(door, { autoAlpha: 0, duration: 7.5, ease: "power1.inOut" }, 81.5);
-    timeline.to(library, { autoAlpha: 1, duration: 10, ease: "power1.inOut" }, 80);
-    timeline.fromTo(
-      libraryFrame,
-      { scale: 1.3 },
-      { scale: 1, duration: 15, ease: "power2.out" },
-      80
+      { scale: () => (mobile ? 1.16 : 1.28), duration: 13.5, ease: "power1.in" },
+      66.5
     );
     timeline.to(
-      libraryFrame,
-      { scale: 1.12, duration: 7, ease: "power1.in" },
+      doorFrame,
+      { scale: () => (mobile ? 1.72 : 2), duration: 9, ease: "power2.in" },
+      80
+    );
+    timeline.to(blackout, { autoAlpha: 0, duration: 5.5, ease: "power2.out" }, 70.5);
+
+    /* ---------- IV. The library ---------- */
+    // Passing through the doorway: warm light floods the frame, and the hall is
+    // already there when the glare clears. No double exposure, no hard cut.
+    timeline.to(flash, { autoAlpha: 0.85, duration: 3, ease: "power2.in" }, 82.5);
+    // The door clears first, while the glare is at its brightest, so the two
+    // shots never sit half-transparent on top of each other.
+    timeline.to(door, { autoAlpha: 0, duration: 3.5, ease: "power2.in" }, 84);
+    timeline.fromTo(
+      library,
+      { autoAlpha: 0 },
+      { autoAlpha: 1, duration: 3.5, ease: "power2.out" },
       86.5
+    );
+    timeline.fromTo(
+      libraryFrame,
+      { scale: 1.18 },
+      { scale: 1, duration: 5.5, ease: "power2.out" },
+      86.5
+    );
+    timeline.to(flash, { autoAlpha: 0, duration: 4.5, ease: "power2.out" }, 87);
+
+    // ...and the walk continues, straight into the shelving at the heart of the
+    // hall. Everything below happens inside that one continuous push.
+    gsap.set(libraryFrame, { transformOrigin: "50% 46%" });
+    timeline.to(
+      libraryFrame,
+      { scale: () => (mobile ? 1.72 : 1.95), duration: 9, ease: "power1.in" },
+      91.5
     );
 
     /* ---------- V. The bookshelf ---------- */
-    // The hall lets go of the frame first, then the shelf resolves out of the
-    // haze a long way off and the camera travels in to meet it. One continuous
-    // push-in instead of two pictures trading places.
-    timeline.to(library, { autoAlpha: 0, duration: 6.5, ease: "power1.inOut" }, 89);
+    // The shelf is not a new shot: it arrives inside the same forward motion,
+    // already close, and settles as the camera comes to rest in front of it.
     timeline.fromTo(
       shelf,
       { autoAlpha: 0 },
-      { autoAlpha: 1, duration: 6, ease: "power1.inOut" },
-      87.5
+      { autoAlpha: 1, duration: 2.2, ease: "power2.out" },
+      95.4
     );
+    // Short, decisive dissolve: the two rooms are framed differently, so a long
+    // cross-fade would read as a double exposure.
+    timeline.to(library, { autoAlpha: 0, duration: 2.2, ease: "power2.in" }, 95.4);
     gsap.set(shelfFrame, { transformOrigin: "50% 50%" });
     timeline.fromTo(
       shelfFrame,
-      { scale: 0.28, filter: "blur(3px)" },
-      { scale: 1, filter: "blur(0px)", duration: 12, ease: "sine.inOut" },
-      87
+      { scale: 1.15, filter: "blur(1.6px)" },
+      { scale: 1, filter: "blur(0px)", duration: 4.1, ease: "power2.out" },
+      95.4
     );
     // The blurred room behind drifts in more slowly than the shelf itself, so
-    // the two layers separate in depth on the way in.
+    // the two layers separate in depth while the camera is still moving.
     if (shelfBackdrop) {
       timeline.fromTo(
         shelfBackdrop,
-        { scale: 1.22 },
-        { scale: 1, duration: 12, ease: "sine.inOut" },
-        87
+        { scale: 1.26 },
+        { scale: 1, duration: 4.1, ease: "power2.out" },
+        95.4
       );
     }
   }, stage);

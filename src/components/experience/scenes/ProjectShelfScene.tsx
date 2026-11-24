@@ -1,6 +1,8 @@
 import s from "@/styles/experience.module.css";
 import { projects, type ProjectId } from "@/data/projects";
 import ProjectBook from "@/components/projects/ProjectBook";
+import LanternGlow from "../effects/LanternGlow";
+import DustParticles from "../effects/DustParticles";
 import Vignette from "../effects/Vignette";
 
 /**
@@ -53,6 +55,10 @@ export default function ProjectShelfScene({
             Projects &amp; Creations
           </p>
 
+          {/* The lantern and its candle, so the shelf is not a frozen photo */}
+          <LanternGlow x={6.6} y={53.5} size={17} delay={0.4} duration={8} />
+          <LanternGlow x={7.4} y={62.4} size={6} delay={1.9} duration={6} />
+
           {projects.map((project, index) => (
             <ProjectBook
               key={project.id}
@@ -69,6 +75,7 @@ export default function ProjectShelfScene({
         </div>
       </div>
 
+      <DustParticles count={18} />
       <Vignette />
     </div>
   );

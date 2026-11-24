@@ -1,6 +1,5 @@
 import s from "@/styles/experience.module.css";
 import DustParticles from "../effects/DustParticles";
-import LanternGlow from "../effects/LanternGlow";
 import Vignette from "../effects/Vignette";
 
 export default function ShaftScene() {
@@ -24,12 +23,6 @@ export default function ShaftScene() {
 
       <div className={s.shaftShade} data-el="shaftShade" aria-hidden="true" />
       <DustParticles count={26} />
-
-      <LanternGlow x={11} y={47} size={13} delay={0.2} duration={6.5} />
-      <LanternGlow x={28} y={34} size={10} delay={1.6} duration={8} />
-      <LanternGlow x={59} y={39} size={9} delay={0.7} duration={7} />
-      <LanternGlow x={66} y={61} size={11} delay={2.2} duration={9} />
-      <LanternGlow x={46} y={57} size={8} delay={1.1} duration={5.5} />
 
       <Vignette />
     </div>

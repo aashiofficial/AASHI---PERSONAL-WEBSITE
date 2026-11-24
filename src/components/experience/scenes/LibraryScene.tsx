@@ -1,5 +1,6 @@
 import s from "@/styles/experience.module.css";
 import DustParticles from "../effects/DustParticles";
+import LanternGlow from "../effects/LanternGlow";
 import Vignette from "../effects/Vignette";
 
 export default function LibraryScene() {
@@ -15,6 +16,10 @@ export default function LibraryScene() {
           loading="lazy"
           decoding="async"
         />
+        {/* Chandeliers and the far doorway, breathing inside the shot */}
+        <LanternGlow x={50} y={12} size={30} delay={0.2} duration={9} />
+        <LanternGlow x={50} y={29} size={16} delay={1.4} duration={7.5} />
+        <LanternGlow x={50} y={64} size={13} delay={2.1} duration={8.5} />
       </div>
 
       <div className={s.libraryBreathe} aria-hidden="true" />

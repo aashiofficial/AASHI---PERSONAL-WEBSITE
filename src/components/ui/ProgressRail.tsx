@@ -10,7 +10,7 @@ type ProgressRailProps = {
 };
 
 /** Jump targets, one per scene, expressed as journey progress. */
-export const SCENE_JUMPS = [0.015, 0.5, 0.7, 0.85, 0.985];
+export const SCENE_JUMPS = [0.015, 0.5, 0.72, 0.885, 0.99];
 
 export default function ProgressRail({
   scene,

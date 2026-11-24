@@ -24,7 +24,7 @@ export default function LanternGlow({
     top: `${y}%`,
     width: `${size}%`,
     aspectRatio: "1 / 1",
-    transform: "translate(-50%, -50%)",
+    translate: "-50% -50%",
     "--delay": `${delay}s`,
     "--dur": `${duration}s`,
   } as CSSProperties;
