@@ -1,0 +1,87 @@
+/* ============================================================
+   Global foundation — palette, type, resets
+   ============================================================ */
+
+:root {
+  --ink: #070504;
+  --ink-soft: #120c07;
+  --parchment: #efe3cd;
+  --parchment-dim: #cbb99b;
+  --gold: #c9a45c;
+  --gold-bright: #e8ce94;
+  --brass: #b08b45;
+  --amber: #f0b26b;
+  --wine: #5a1f22;
+
+  --font-serif: var(--font-display), "Iowan Old Style", "Palatino Linotype",
+    Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: var(--font-body), "Iowan Old Style", Georgia, "Times New Roman",
+    serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+::selection {
+  background: rgba(201, 164, 92, 0.28);
+  color: #fff7e7;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 4px;
+}
+
+/* Slim, dark scrollbar that suits the archive */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 164, 92, 0.35) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(201, 164, 92, 0.35);
+  border-radius: 99px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
